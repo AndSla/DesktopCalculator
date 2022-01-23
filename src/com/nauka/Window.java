@@ -2,8 +2,11 @@ package com.nauka;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.Arrays;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 public class Window extends JFrame {
 
@@ -26,6 +29,8 @@ public class Window extends JFrame {
     JButton buttonAdd = new JButton();
     JButton buttonSolve = new JButton();
 
+    Set<JButton> buttons = new HashSet<>();
+
     public Window() {
         super("Calculator");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -39,6 +44,9 @@ public class Window extends JFrame {
 
         setButtons();
 
+        setButtonsActions();
+
+        solve();
 
     }
 
@@ -51,8 +59,6 @@ public class Window extends JFrame {
     }
 
     private void setButtons() {
-        Set<JButton> buttons = new HashSet<>();
-
         buttonSeven.setName("Seven");
         buttonSeven.setText("7");
         buttonSeven.setBounds(2, 35, 50, 50);
@@ -89,7 +95,7 @@ public class Window extends JFrame {
         buttons.add(buttonSix);
 
         buttonMultiply.setName("Multiply");
-        buttonMultiply.setText("*");
+        buttonMultiply.setText("x");
         buttonMultiply.setBounds(176, 93, 50, 50);
         buttons.add(buttonMultiply);
 
@@ -118,11 +124,6 @@ public class Window extends JFrame {
         buttonZero.setBounds(2, 209, 50, 50);
         buttons.add(buttonZero);
 
-        buttonSolve.setName("Equals");
-        buttonSolve.setText("=");
-        buttonSolve.setBounds(60, 209, 108, 50);
-        buttons.add(buttonSolve);
-
         buttonSubtract.setName("Subtract");
         buttonSubtract.setText("-");
         buttonSubtract.setBounds(176, 209, 50, 50);
@@ -130,28 +131,73 @@ public class Window extends JFrame {
 
         buttons.forEach(this::add);
 
+        buttonSolve.setName("Equals");
+        buttonSolve.setText("=");
+        buttonSolve.setBounds(60, 209, 108, 50);
+        add(buttonSolve);
+
     }
 
+    private void setButtonsActions() {
 
+        buttons.forEach(b -> b.addActionListener(e -> {
+            String text = equationTextField.getText();
+            text += b.getText();
+            equationTextField.setText(text);
+        }));
 
-    private void setComponents() {
-//        equationTextField = new JTextField();
-//        equationTextField.setName("EquationTextField");
-//        equationTextField.setBounds(20, 20, 100, 20);
-//        add(equationTextField);
-//
-//        JButton solveButton = new JButton();
-//        solveButton.setName("Solve");
-//        solveButton.setBounds(100, 70, 100, 30);
-//        add(solveButton);
-//
-//        solveButton.addActionListener(e -> {
-//            String equation = equationTextField.getText();
-//            String[] numbersString = equation.split("\\+");
-//            int result = Integer.parseInt(numbersString[0]) + Integer.parseInt(numbersString[1]);
-//            equation += "=" + result;
-//            equationTextField.setText(equation);
-//        });
+    }
+
+    private void solve() {
+        buttonSolve.addActionListener(e -> {
+            String equation = equationTextField.getText();
+            String operator = operator(equation);
+            List<Double> numbers;
+            double result = 0;
+
+            if (operator != null) {
+
+                if (operator.equals("+")) {
+                    numbers = Arrays.stream(equation.split("\\+")).map(Double::valueOf).collect(Collectors.toList());
+                } else {
+                    numbers = Arrays.stream(equation.split(operator)).map(Double::valueOf).collect(Collectors.toList());
+                }
+
+                switch (operator) {
+                    case "/":
+                        result = numbers.get(0) / numbers.get(1);
+                        break;
+                    case "x":
+                        result = numbers.get(0) * numbers.get(1);
+                        break;
+                    case "-":
+                        result = numbers.get(0) - numbers.get(1);
+                        break;
+                    case "+":
+                        result = numbers.get(0) + numbers.get(1);
+                }
+            }
+
+            equationTextField.setText(equation + " = " + result);
+
+        });
+    }
+
+    private String operator(String equation) {
+        if (equation.contains("/")) {
+            return "/";
+        }
+        if (equation.contains("x")) {
+            return "x";
+        }
+        if (equation.contains("+")) {
+            return "+";
+        }
+        if (equation.contains("-")) {
+            return "-";
+        }
+
+        return null;
 
     }
 
