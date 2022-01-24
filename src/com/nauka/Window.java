@@ -19,8 +19,8 @@ public class Window extends JFrame {
     private JButton twoButton;
     private JButton threeButton;
     private JButton addButton;
-    private JLabel equationLabel;
     private JLabel resultLabel;
+    private JLabel equationLabel;
     private JButton dotButton;
     private JButton zeroButton;
     private JButton equalsButton;
@@ -35,6 +35,16 @@ public class Window extends JFrame {
         setResizable(false);
         setLocationRelativeTo(null);
         setVisible(true);
+
+        buttonEvents();
+    }
+
+    private void buttonEvents() {
+        oneButton.addActionListener(e -> {
+            String equation = equationLabel.getText();
+            equation += oneButton.getText();
+            equationLabel.setText(equation);
+        });
     }
 
 }

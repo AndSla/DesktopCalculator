@@ -120,15 +120,17 @@
           <text value="+"/>
         </properties>
       </component>
-      <component id="f579c" class="javax.swing.JLabel" binding="resultLabel">
+      <component id="f579c" class="javax.swing.JLabel" binding="equationLabel">
         <constraints>
-          <grid row="1" column="0" row-span="1" col-span="4" vsize-policy="0" hsize-policy="0" anchor="4" fill="0" indent="0" use-parent-layout="false"/>
+          <grid row="1" column="0" row-span="1" col-span="4" vsize-policy="0" hsize-policy="0" anchor="4" fill="0" indent="0" use-parent-layout="false">
+            <preferred-size width="-1" height="15"/>
+          </grid>
         </constraints>
         <properties>
-          <text value="0"/>
+          <text value=""/>
         </properties>
       </component>
-      <component id="960c" class="javax.swing.JLabel" binding="equationLabel">
+      <component id="960c" class="javax.swing.JLabel" binding="resultLabel">
         <constraints>
           <grid row="0" column="0" row-span="1" col-span="4" vsize-policy="0" hsize-policy="0" anchor="4" fill="0" indent="0" use-parent-layout="false"/>
         </constraints>
