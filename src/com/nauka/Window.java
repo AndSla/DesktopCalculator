@@ -27,6 +27,12 @@ public class Window extends JFrame {
     private JButton minusButton;
     private JPanel mainPanel;
 
+    private final JButton[] inputButtons = new JButton[]{
+            oneButton, twoButton, threeButton, fourButton, fiveButton,
+            sixButton, sevenButton, eightButton, nineButton, zeroButton,
+            addButton, minusButton, multiplyButton, divideButton, dotButton
+    };
+
     public Window() throws HeadlessException {
         super("Calculator");
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
@@ -40,11 +46,25 @@ public class Window extends JFrame {
     }
 
     private void buttonEvents() {
-        oneButton.addActionListener(e -> {
+
+        for (JButton inputButton : inputButtons) {
+            inputButton.addActionListener(e -> {
+                String equation = equationLabel.getText();
+                equation += inputButton.getText();
+                equationLabel.setText(equation);
+            });
+        }
+
+        clearButton.addActionListener(e -> equationLabel.setText(""));
+
+        delButton.addActionListener(e -> {
             String equation = equationLabel.getText();
-            equation += oneButton.getText();
-            equationLabel.setText(equation);
+            if (equation.length() > 0) {
+                equation = equation.substring(0, equation.length() - 1);
+                equationLabel.setText(equation);
+            }
         });
+
     }
 
 }
