@@ -2,8 +2,9 @@ package com.nauka;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.Deque;
 
-public class Window extends JFrame {
+public class Calculator extends JFrame {
 
     private JButton clearButton;
     private JButton delButton;
@@ -37,7 +38,7 @@ public class Window extends JFrame {
     };
 
 
-    public Window() throws HeadlessException {
+    public Calculator() throws HeadlessException {
         super("Calculator");
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         setContentPane(mainPanel);
@@ -81,7 +82,10 @@ public class Window extends JFrame {
             });
         }
 
-        clearButton.addActionListener(e -> equationLabel.setText(""));
+        clearButton.addActionListener(e -> {
+            equationLabel.setText("");
+            resultLabel.setText("0");
+        });
 
         delButton.addActionListener(e -> {
             String equation = equationLabel.getText();
@@ -91,6 +95,12 @@ public class Window extends JFrame {
                 equationLabel.setText(equation);
             }
 
+        });
+
+        equalsButton.addActionListener(e -> {
+            String equation = equationLabel.getText();
+            Deque<String> postFixNotationStack = Utils.convertToPostFixNotation(equation);
+            resultLabel.setText(Utils.calculate(postFixNotationStack));
         });
 
     }
