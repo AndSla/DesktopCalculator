@@ -109,7 +109,7 @@ public class Utils {
 
         String result = "0";
         Deque<String> subEquation = new ArrayDeque<>();
-        MathContext mathContext = new MathContext(14, RoundingMode.HALF_EVEN);
+        MathContext mathContext = new MathContext(12, RoundingMode.HALF_EVEN);
 
         while (postFixNotationStack.size() > 0) {
 
