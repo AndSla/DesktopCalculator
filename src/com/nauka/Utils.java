@@ -1,7 +1,12 @@
 package com.nauka;
 
+import java.math.BigDecimal;
+import java.math.MathContext;
+import java.math.RoundingMode;
+import java.text.MessageFormat;
 import java.util.ArrayDeque;
 import java.util.Deque;
+import java.util.Objects;
 
 public class Utils {
     static boolean isLastCharDigit(String equation) {
@@ -73,10 +78,38 @@ public class Utils {
 
     }
 
+    static boolean isDotAllowed(String equation) {
+        char[] equationChars = equation.toCharArray();
+        Deque<Character> equationQueue = new ArrayDeque<>();
+        for (char c : equationChars) {
+            equationQueue.offerLast(c);
+        }
+
+        if (equation.length() == 0 || isOperator(String.valueOf(equationQueue.peekLast()))) {
+            return false;
+        }
+
+        while (!equationQueue.isEmpty()) {
+            char scan = equationQueue.pollLast();
+
+            if (isOperator(String.valueOf(scan))) {
+                break;
+            }
+
+            if (scan == Symbol.DOT.getSymbol()) {
+                return false;
+            }
+
+        }
+
+        return true;
+    }
+
     static String calculate(Deque<String> postFixNotationStack) {
 
-        String result = "";
+        String result = "0";
         Deque<String> subEquation = new ArrayDeque<>();
+        MathContext mathContext = new MathContext(14, RoundingMode.HALF_EVEN);
 
         while (postFixNotationStack.size() > 0) {
 
@@ -85,30 +118,30 @@ public class Utils {
 
             if (isOperator(scan)) {
                 String operator = subEquation.pollLast();
-                double b = Double.parseDouble(subEquation.pollLast());
-                double a = Double.parseDouble(subEquation.pollLast());
+                BigDecimal b = BigDecimal.valueOf(Double.parseDouble(Objects.requireNonNull(subEquation.pollLast())));
+                BigDecimal a = BigDecimal.valueOf(Double.parseDouble(Objects.requireNonNull(subEquation.pollLast())));
 
                 if (String.valueOf(Symbol.ADD.getSymbol()).equals(operator)) {
-                    result = String.valueOf(a + b);
+                    result = String.valueOf(a.add(b, mathContext));
                     subEquation.offerLast(result);
                 }
 
                 if (String.valueOf(Symbol.SUBTRACT.getSymbol()).equals(operator)) {
-                    result = String.valueOf(a - b);
+                    result = String.valueOf(a.subtract(b, mathContext));
                     subEquation.offerLast(result);
                 }
 
                 if (String.valueOf(Symbol.MULTIPLY.getSymbol()).equals(operator)) {
-                    result = String.valueOf(a * b);
+                    result = String.valueOf(a.multiply(b, mathContext));
                     subEquation.offerLast(result);
                 }
 
                 if (String.valueOf(Symbol.DIVIDE.getSymbol()).equals(operator)) {
-                    result = String.valueOf(a / b);
+                    result = String.valueOf(a.divide(b, mathContext));
                     subEquation.offerLast(result);
                 }
 
-                while (!subEquation.isEmpty()){
+                while (!subEquation.isEmpty()) {
                     postFixNotationStack.offerFirst(subEquation.pollLast());
                 }
 
@@ -116,7 +149,9 @@ public class Utils {
 
         }
 
-        return result;
+        String dotAndTrailingZeros = MessageFormat.format("\\{0}*0+$", Symbol.DOT.getSymbol());
+
+        return result.replaceAll(dotAndTrailingZeros, "");
 
     }
 

@@ -34,7 +34,7 @@ public class Calculator extends JFrame {
     };
 
     private final JButton[] operatorButtons = new JButton[]{
-            addButton, minusButton, multiplyButton, divideButton, dotButton
+            addButton, minusButton, multiplyButton, divideButton
     };
 
 
@@ -82,6 +82,14 @@ public class Calculator extends JFrame {
             });
         }
 
+        dotButton.addActionListener(e -> {
+            String equation = equationLabel.getText();
+            if (Utils.isDotAllowed(equation)) {
+                equation += dotButton.getText();
+                equationLabel.setText(equation);
+            }
+        });
+
         clearButton.addActionListener(e -> {
             equationLabel.setText("");
             resultLabel.setText("0");
@@ -99,8 +107,13 @@ public class Calculator extends JFrame {
 
         equalsButton.addActionListener(e -> {
             String equation = equationLabel.getText();
-            Deque<String> postFixNotationStack = Utils.convertToPostFixNotation(equation);
-            resultLabel.setText(Utils.calculate(postFixNotationStack));
+            char lastCharacter = equation.charAt(equation.length() - 1);
+
+            if (Character.isDigit(lastCharacter)) {
+                Deque<String> postFixNotationStack = Utils.convertToPostFixNotation(equation);
+                resultLabel.setText(Utils.calculate(postFixNotationStack));
+            }
+
         });
 
     }
