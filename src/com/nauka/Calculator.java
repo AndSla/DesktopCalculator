@@ -184,6 +184,7 @@ public class Calculator extends JFrame {
         for (JButton operatorButton : operatorButtons) {
             operatorButton.addActionListener(e -> {
                 String equation = equationLabel.getText();
+                StringBuilder equationSb = new StringBuilder(equation);
                 boolean operatorIsMinus = operatorButton.getText().equals(String.valueOf(Symbol.SUBTRACT.getSymbol()));
 
                 if (equation.isEmpty() && operatorIsMinus) {
@@ -192,6 +193,13 @@ public class Calculator extends JFrame {
                 } else if (!equation.isEmpty() && Utils.isLastCharDigit(equation)) {
                     equation += operatorButton.getText();
                     equationLabel.setText(equation);
+                } else if (!equation.isEmpty() && Utils.isOperator(equation.substring(equation.length() - 1))) {
+                    if (!equation.equals(String.valueOf(Symbol.SUBTRACT.getSymbol()))) {
+                        equationSb.deleteCharAt(equationSb.length() - 1);
+                        equation = equationSb.toString();
+                        equation += operatorButton.getText();
+                        equationLabel.setText(equation);
+                    }
                 }
 
             });
@@ -225,8 +233,16 @@ public class Calculator extends JFrame {
             char lastCharacter = equation.charAt(equation.length() - 1);
 
             if (Character.isDigit(lastCharacter)) {
+                equationLabel.setForeground(Color.black);
                 Deque<String> postFixNotationStack = Utils.convertToPostFixNotation(equation);
-                resultLabel.setText(Utils.calculate(postFixNotationStack));
+                String result = Utils.calculate(postFixNotationStack);
+                if (result.equals("DIVIDE_BY_0")) {
+                    equationLabel.setForeground(Color.RED.darker());
+                } else {
+                    resultLabel.setText(result);
+                }
+            } else {
+                equationLabel.setForeground(Color.RED.darker());
             }
 
         });

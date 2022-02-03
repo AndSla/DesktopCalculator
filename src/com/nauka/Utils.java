@@ -138,8 +138,13 @@ public class Utils {
                 }
 
                 if (String.valueOf(Symbol.DIVIDE.getSymbol()).equals(operator)) {
-                    result = String.valueOf(a.divide(b, mathContext));
-                    subEquation.offerLast(result);
+                    if (b.doubleValue() == 0) {
+                        result = "DIVIDE_BY_0";
+                        break;
+                    } else {
+                        result = String.valueOf(a.divide(b, mathContext));
+                        subEquation.offerLast(result);
+                    }
                 }
 
                 while (!subEquation.isEmpty()) {
