@@ -187,6 +187,17 @@ public class Calculator extends JFrame {
                 StringBuilder equationSb = new StringBuilder(equation);
                 boolean operatorIsMinus = operatorButton.getText().equals(String.valueOf(Symbol.SUBTRACT.getSymbol()));
 
+                if (equationSb.charAt(0) == Symbol.DOT.getSymbol()) {
+                    equationSb.insert(0, 0);
+                    equation = equationSb.toString();
+                    equationLabel.setText(equation);
+                }
+                if (equationSb.charAt(equationSb.length() - 1) == Symbol.DOT.getSymbol()) {
+                    equationSb.insert(equationSb.length(), 0);
+                    equation = equationSb.toString();
+                    equationLabel.setText(equation);
+                }
+
                 if (equation.isEmpty() && operatorIsMinus) {
                     equation += operatorButton.getText();
                     equationLabel.setText(equation);
@@ -207,10 +218,10 @@ public class Calculator extends JFrame {
 
         dotButton.addActionListener(e -> {
             String equation = equationLabel.getText();
-            if (Utils.isDotAllowed(equation)) {
-                equation += dotButton.getText();
-                equationLabel.setText(equation);
-            }
+            //if (Utils.isDotAllowed(equation)) {
+            equation += dotButton.getText();
+            equationLabel.setText(equation);
+            //}
         });
 
         clearButton.addActionListener(e -> {
@@ -248,5 +259,4 @@ public class Calculator extends JFrame {
         });
 
     }
-
 }

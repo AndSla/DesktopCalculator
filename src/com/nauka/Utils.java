@@ -159,7 +159,7 @@ public class Utils {
         String prettyResult = result;
 
 
-        if (result.matches("\\d+" + Symbol.DOT.getSymbol() + "\\d+")) {
+        if (result.matches("-*\\d+" + Symbol.DOT.getSymbol() + "\\d+")) {
 
             while (true) {
                 int i = sb.length() - 1;
