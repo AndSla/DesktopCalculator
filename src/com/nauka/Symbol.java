@@ -3,7 +3,7 @@ package com.nauka;
 public enum Symbol {
 
     ADD('\u002B', 1),
-    SUBTRACT('\u2212', 1),
+    SUBTRACT('\u002D', 1),
     MULTIPLY('\u00D7', 2),
     DIVIDE('\u00F7', 2),
     DOT('.', 0);

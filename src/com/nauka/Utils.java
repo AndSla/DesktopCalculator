@@ -3,7 +3,6 @@ package com.nauka;
 import java.math.BigDecimal;
 import java.math.MathContext;
 import java.math.RoundingMode;
-import java.text.MessageFormat;
 import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.Objects;
@@ -24,7 +23,9 @@ public class Utils {
     }
 
     static boolean isOperator(String symbol) {
-        if (symbol.charAt(0) != Symbol.DOT.getSymbol()) {
+        if (symbol.length() > 1) {
+            return false;
+        } else if (symbol.charAt(0) != Symbol.DOT.getSymbol()) {
             for (Symbol value : Symbol.values()) {
                 if (value.getSymbol() == symbol.charAt(0)) {
                     return true;
@@ -149,9 +150,31 @@ public class Utils {
 
         }
 
-        String dotAndTrailingZeros = MessageFormat.format("\\{0}*0+$", Symbol.DOT.getSymbol());
+        StringBuilder sb = new StringBuilder(result);
+        String prettyResult = result;
 
-        return result.replaceAll(dotAndTrailingZeros, "");
+
+        if (result.matches("\\d+" + Symbol.DOT.getSymbol() + "\\d+")) {
+
+            while (true) {
+                int i = sb.length() - 1;
+
+                if (sb.charAt(i) == '0') {
+                    sb.deleteCharAt(i);
+                } else if (sb.charAt(i) == Symbol.DOT.getSymbol()) {
+                    sb.deleteCharAt(i);
+                    prettyResult = sb.toString();
+                    break;
+                } else {
+                    prettyResult = sb.toString();
+                    break;
+                }
+
+            }
+
+        }
+
+        return prettyResult;
 
     }
 
