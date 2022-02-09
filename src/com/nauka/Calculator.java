@@ -24,13 +24,13 @@ public class Calculator extends JFrame {
     JButton subtractButton = new JButton();
     JButton multiplyButton = new JButton();
     JButton divideButton = new JButton();
-    JButton dotButton = new JButton();
-    JButton equalsButton = new JButton();
-
-    JButton parenthesisButton = new JButton();
     JButton powerTwoButton = new JButton();
     JButton powerYButton = new JButton();
     JButton squareRootButton = new JButton();
+
+    JButton equalsButton = new JButton();
+    JButton dotButton = new JButton();
+    JButton parenthesisButton = new JButton();
     JButton plusMinusButton = new JButton();
 
     JLabel resultLabel = new JLabel();
@@ -42,7 +42,8 @@ public class Calculator extends JFrame {
     };
 
     private final JButton[] operatorButtons = new JButton[]{
-            addButton, subtractButton, multiplyButton, divideButton
+            addButton, subtractButton, multiplyButton, divideButton,
+            powerTwoButton, powerYButton, squareRootButton
     };
 
 
@@ -83,7 +84,12 @@ public class Calculator extends JFrame {
         add(equationLabel);
     }
 
-    private void setButtons() {
+    private void createButton(JButton button,
+                              String name,
+                              String text,
+                              int row,
+                              int col) {
+
         int bWidth = 50;
         int bHeight = 50;
         int hSpacer = 58;
@@ -91,121 +97,40 @@ public class Calculator extends JFrame {
         int topMargin = 80;
         int leftMargin = 2;
 
-        parenthesisButton.setName("Parentheses");
-        parenthesisButton.setText("( )");
-        parenthesisButton.setBounds(leftMargin, topMargin, bWidth, bHeight);
-        add(parenthesisButton);
+        button.setName(name);
+        button.setText(text);
+        button.setMargin(new Insets(0, 0, 0, 0));
+        button.setBounds(leftMargin + col * hSpacer, topMargin + row * vSpacer, bWidth, bHeight);
+        add(button);
 
-        clearButton.setName("Clear");
-        clearButton.setText("C");
-        clearButton.setBounds(leftMargin + 2 * hSpacer, topMargin, bWidth, bHeight);
-        add(clearButton);
+    }
 
-        delButton.setName("Delete");
-        delButton.setText("Del");
-        delButton.setMargin(new Insets(0, 0, 0, 0));
-        delButton.setBounds(leftMargin + 3 * hSpacer, topMargin, bWidth, bHeight);
-        add(delButton);
+    private void setButtons() {
 
-        powerTwoButton.setName("PowerTwo");
-        powerTwoButton.setText("x" + Symbol.POWER_TWO.getSymbol());
-        powerTwoButton.setBounds(leftMargin, topMargin + vSpacer, bWidth, bHeight);
-        add(powerTwoButton);
+        createButton(parenthesisButton, "Parentheses", "( )", 0, 0);
+        createButton(clearButton, "Clear", "C", 0, 2);
+        createButton(delButton, "Delete", "Del", 0, 3);
+        createButton(powerTwoButton, "PowerTwo", "x" + Symbol.POWER_TWO.getSymbol(), 1, 0);
+        createButton(powerYButton, "PowerY", "x" + Symbol.POWER_Y.getSymbol(), 1, 1);
+        createButton(squareRootButton, "SquareRoot", String.valueOf(Symbol.SQUARE_ROOT.getSymbol()), 1, 2);
+        createButton(divideButton, "Divide", String.valueOf(Symbol.DIVIDE.getSymbol()), 1, 3);
+        createButton(sevenButton, "Seven", "7", 2, 0);
+        createButton(eightButton, "Eight", "8", 2, 1);
+        createButton(nineButton, "Nine", "9", 2, 2);
+        createButton(multiplyButton, "Multiply", String.valueOf(Symbol.MULTIPLY.getSymbol()), 2, 3);
+        createButton(fourButton, "Four", "4", 3, 0);
+        createButton(fiveButton, "Five", "5", 3, 1);
+        createButton(sixButton, "Six", "6", 3, 2);
+        createButton(subtractButton, "Subtract", String.valueOf(Symbol.SUBTRACT.getSymbol()), 3, 3);
+        createButton(oneButton, "One", "1", 4, 0);
+        createButton(twoButton, "Two", "2", 4, 1);
+        createButton(threeButton, "Three", "3", 4, 2);
+        createButton(addButton, "Add", String.valueOf(Symbol.ADD.getSymbol()), 4, 3);
+        createButton(plusMinusButton, "PlusMinus", String.valueOf(Symbol.PLUS_MINUS.getSymbol()), 5, 0);
+        createButton(zeroButton, "Zero", "0", 5, 1);
+        createButton(dotButton, "Dot", String.valueOf(Symbol.DOT.getSymbol()), 5, 2);
+        createButton(equalsButton, "Equals", "=", 5, 3);
 
-        powerYButton.setName("PowerY");
-        powerYButton.setText("x" + Symbol.POWER_Y.getSymbol());
-        powerYButton.setBounds(leftMargin + hSpacer, topMargin + vSpacer, bWidth, bHeight);
-        add(powerYButton);
-
-        squareRootButton.setName("SquareRoot");
-        squareRootButton.setText(String.valueOf(Symbol.SQUARE_ROOT.getSymbol()));
-        squareRootButton.setBounds(leftMargin + 2 * hSpacer, topMargin + vSpacer, bWidth, bHeight);
-        add(squareRootButton);
-
-        divideButton.setName("Divide");
-        divideButton.setText(String.valueOf(Symbol.DIVIDE.getSymbol()));
-        divideButton.setBounds(leftMargin + 3 * hSpacer, topMargin + vSpacer, bWidth, bHeight);
-        add(divideButton);
-
-        sevenButton.setName("Seven");
-        sevenButton.setText("7");
-        sevenButton.setBounds(leftMargin, topMargin + 2 * vSpacer, bWidth, bHeight);
-        add(sevenButton);
-
-        eightButton.setName("Eight");
-        eightButton.setText("8");
-        eightButton.setBounds(leftMargin + hSpacer, topMargin + 2 * vSpacer, bWidth, bHeight);
-        add(eightButton);
-
-        nineButton.setName("Nine");
-        nineButton.setText("9");
-        nineButton.setBounds(leftMargin + 2 * hSpacer, topMargin + 2 * vSpacer, bWidth, bHeight);
-        add(nineButton);
-
-        multiplyButton.setName("Multiply");
-        multiplyButton.setText(String.valueOf(Symbol.MULTIPLY.getSymbol()));
-        multiplyButton.setBounds(leftMargin + 3 * hSpacer, topMargin + 2 * vSpacer, bWidth, bHeight);
-        add(multiplyButton);
-
-        fourButton.setName("Four");
-        fourButton.setText("4");
-        fourButton.setBounds(leftMargin, topMargin + 3 * vSpacer, bWidth, bHeight);
-        add(fourButton);
-
-        fiveButton.setName("Five");
-        fiveButton.setText("5");
-        fiveButton.setBounds(leftMargin + hSpacer, topMargin + 3 * vSpacer, bWidth, bHeight);
-        add(fiveButton);
-
-        sixButton.setName("Six");
-        sixButton.setText("6");
-        sixButton.setBounds(leftMargin + 2 * hSpacer, topMargin + 3 * vSpacer, bWidth, bHeight);
-        add(sixButton);
-
-        subtractButton.setName("Subtract");
-        subtractButton.setText(String.valueOf(Symbol.SUBTRACT.getSymbol()));
-        subtractButton.setBounds(leftMargin + 3 * hSpacer, topMargin + 3 * vSpacer, bWidth, bHeight);
-        add(subtractButton);
-
-        oneButton.setName("One");
-        oneButton.setText("1");
-        oneButton.setBounds(leftMargin, topMargin + 4 * vSpacer, bWidth, bHeight);
-        add(oneButton);
-
-        twoButton.setName("Two");
-        twoButton.setText("2");
-        twoButton.setBounds(leftMargin + hSpacer, topMargin + 4 * vSpacer, bWidth, bHeight);
-        add(twoButton);
-
-        threeButton.setName("Three");
-        threeButton.setText("3");
-        threeButton.setBounds(leftMargin + 2 * hSpacer, topMargin + 4 * vSpacer, bWidth, bHeight);
-        add(threeButton);
-
-        addButton.setName("Add");
-        addButton.setText(String.valueOf(Symbol.ADD.getSymbol()));
-        addButton.setBounds(leftMargin + 3 * hSpacer, topMargin + 4 * vSpacer, bWidth, bHeight);
-        add(addButton);
-
-        plusMinusButton.setName("PlusMinus");
-        plusMinusButton.setText(String.valueOf(Symbol.PLUS_MINUS.getSymbol()));
-        plusMinusButton.setBounds(leftMargin, topMargin + 5 * vSpacer, bWidth, bHeight);
-        add(plusMinusButton);
-
-        zeroButton.setName("Zero");
-        zeroButton.setText("0");
-        zeroButton.setBounds(leftMargin + hSpacer, topMargin + 5 * vSpacer, bWidth, bHeight);
-        add(zeroButton);
-
-        dotButton.setName("Dot");
-        dotButton.setText(String.valueOf(Symbol.DOT.getSymbol()));
-        dotButton.setBounds(leftMargin + 2 * hSpacer, topMargin + 5 * vSpacer, bWidth, bHeight);
-        add(dotButton);
-
-        equalsButton.setName("Equals");
-        equalsButton.setText("=");
-        equalsButton.setBounds(leftMargin + 3 * hSpacer, topMargin + 5 * vSpacer, bWidth, bHeight);
-        add(equalsButton);
     }
 
     private void buttonEvents() {
@@ -259,6 +184,42 @@ public class Calculator extends JFrame {
             equation += dotButton.getText();
             equationLabel.setText(equation);
             //}
+        });
+
+        plusMinusButton.addActionListener(e -> {
+            String equation = equationLabel.getText();
+            StringBuilder sb = new StringBuilder(equation);
+
+            switch (equation.length()) {
+
+                case 0:
+
+                    equationLabel.setText("-");
+                    break;
+
+                case 1:
+
+                    if (equationLabel.getText().equals("-")) {
+                        equationLabel.setText("");
+                    } else if (equationLabel.getText().equals("-")) {
+                        equationLabel.setText("-");
+                    }
+                    break;
+
+                default:
+
+                    if (sb.charAt(sb.length() - 1) == '-') {
+                        sb.deleteCharAt(sb.length() - 1);
+                        sb.append('+');
+                        equationLabel.setText(sb.toString());
+                    } else if (sb.charAt(sb.length() - 1) == '+') {
+                        sb.deleteCharAt(sb.length() - 1);
+                        sb.append('-');
+                        equationLabel.setText(sb.toString());
+                    }
+
+            }
+
         });
 
         clearButton.addActionListener(e -> {

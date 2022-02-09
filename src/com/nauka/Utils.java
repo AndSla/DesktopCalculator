@@ -8,6 +8,7 @@ import java.util.Deque;
 import java.util.Objects;
 
 public class Utils {
+
     static boolean isLastCharDigit(String equation) {
         char lastChar = equation.charAt(equation.length() - 1);
         return Character.isDigit(lastChar);
@@ -23,12 +24,10 @@ public class Utils {
     }
 
     static boolean isOperator(String symbol) {
-        if (symbol.length() > 1) {
-            return false;
-        } else if (symbol.charAt(0) != Symbol.DOT.getSymbol()) {
+        if (symbol.length() == 1) {
             for (Symbol value : Symbol.values()) {
                 if (value.getSymbol() == symbol.charAt(0)) {
-                    return true;
+                    return value.isOperator();
                 }
             }
         }
@@ -155,9 +154,13 @@ public class Utils {
 
         }
 
+        return cutTrailingZeros(result);
+
+    }
+
+    static String cutTrailingZeros(String result) {
         StringBuilder sb = new StringBuilder(result);
         String prettyResult = result;
-
 
         if (result.matches("-*\\d+" + Symbol.DOT.getSymbol() + "\\d+")) {
 
