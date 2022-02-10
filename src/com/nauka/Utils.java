@@ -9,12 +9,12 @@ import java.util.Objects;
 
 public class Utils {
 
-    static boolean isLastCharDigit(String equation) {
+    boolean isLastCharDigit(String equation) {
         char lastChar = equation.charAt(equation.length() - 1);
         return Character.isDigit(lastChar);
     }
 
-    static int getRank(Character symbol) {
+    private int getRank(Character symbol) {
         for (Symbol value : Symbol.values()) {
             if (value.getSymbol() == symbol) {
                 return value.getRank();
@@ -23,7 +23,7 @@ public class Utils {
         return -1;
     }
 
-    static boolean isOperator(String symbol) {
+    boolean isOperator(String symbol) {
         if (symbol.length() == 1) {
             for (Symbol value : Symbol.values()) {
                 if (value.getSymbol() == symbol.charAt(0)) {
@@ -34,7 +34,7 @@ public class Utils {
         return false;
     }
 
-    static Deque<String> convertToPostFixNotation(String equation) {
+    Deque<String> convertToPostFixNotation(String equation) {
 
         Deque<String> postFixNotationStack = new ArrayDeque<>();
         Deque<Character> operatorsStack = new ArrayDeque<>();
@@ -78,34 +78,58 @@ public class Utils {
 
     }
 
-    static boolean isDotAllowed(String equation) {
-        char[] equationChars = equation.toCharArray();
-        Deque<Character> equationQueue = new ArrayDeque<>();
-        for (char c : equationChars) {
-            equationQueue.offerLast(c);
-        }
+    boolean isDotAllowed(String equation) {
 
-        if (equation.length() == 0 || isOperator(String.valueOf(equationQueue.peekLast()))) {
-            return false;
-        }
+        boolean isAllowed = true;
 
-        while (!equationQueue.isEmpty()) {
-            char scan = equationQueue.pollLast();
+        if (equation.length() > 0) {
 
-            if (isOperator(String.valueOf(scan))) {
-                break;
+            while (equation.length() > 0) {
+
+                if (getLastChar(equation) == Symbol.DOT.getSymbol()) {
+                    isAllowed = false;
+                    break;
+                }
+
+                if (isOperator(String.valueOf(getLastChar(equation)))) {
+                    break;
+                }
+
+                equation = deleteLastChar(equation);
+
             }
 
-            if (scan == Symbol.DOT.getSymbol()) {
-                return false;
-            }
+            return isAllowed;
+
+        } else {
+
+            return true;
 
         }
 
-        return true;
     }
 
-    static String calculate(Deque<String> postFixNotationStack) {
+    String addZeroBeforeDotIfNecessary(String equation) {
+
+        if (equation.length() > 1) {
+
+            int index = equation.length() - 1;
+
+            if (!Character.isDigit(equation.charAt(index - 1))) {
+                equation = insertCharAtIndex(equation, index, '0');
+            }
+
+        } else {
+
+            equation = insertCharAtIndex(equation, 0, '0');
+
+        }
+
+        return equation;
+
+    }
+
+    String calculate(Deque<String> postFixNotationStack) {
 
         String result = "0";
         Deque<String> subEquation = new ArrayDeque<>();
@@ -158,7 +182,7 @@ public class Utils {
 
     }
 
-    static String cutTrailingZeros(String result) {
+    private String cutTrailingZeros(String result) {
         StringBuilder sb = new StringBuilder(result);
         String prettyResult = result;
 
@@ -184,6 +208,35 @@ public class Utils {
 
         return prettyResult;
 
+    }
+
+    char getLastChar(String equation) {
+        if (equation.length() < 1) {
+            return '#';
+        }
+        return equation.charAt(equation.length() - 1);
+    }
+
+    String changeLastChar(String equation, char changeInto) {
+        StringBuilder sb = new StringBuilder(equation);
+        sb.setCharAt(equation.length() - 1, changeInto);
+        return sb.toString();
+    }
+
+    String deleteLastChar(String equation) {
+        StringBuilder sb = new StringBuilder(equation);
+        sb.deleteCharAt(equation.length() - 1);
+        return sb.toString();
+    }
+
+    String addChar(String equation, char charToAdd) {
+        return equation + charToAdd;
+    }
+
+    String insertCharAtIndex(String equation, int index, char insertChar) {
+        StringBuilder sb = new StringBuilder(equation);
+        sb.insert(index, insertChar);
+        return sb.toString();
     }
 
 }

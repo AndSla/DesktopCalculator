@@ -46,6 +46,7 @@ public class Calculator extends JFrame {
             powerTwoButton, powerYButton, squareRootButton
     };
 
+    private final Utils ut = new Utils();
 
     public Calculator() throws HeadlessException {
         super("Calculator");
@@ -146,49 +147,45 @@ public class Calculator extends JFrame {
         for (JButton operatorButton : operatorButtons) {
             operatorButton.addActionListener(e -> {
                 String equation = equationLabel.getText();
-                StringBuilder equationSb = new StringBuilder(equation);
-                boolean operatorIsMinus = operatorButton.getText().equals(String.valueOf(Symbol.SUBTRACT.getSymbol()));
 
-                if (equationSb.charAt(0) == Symbol.DOT.getSymbol()) {
-                    equationSb.insert(0, 0);
-                    equation = equationSb.toString();
-                    equationLabel.setText(equation);
-                }
-                if (equationSb.charAt(equationSb.length() - 1) == Symbol.DOT.getSymbol()) {
-                    equationSb.insert(equationSb.length(), 0);
-                    equation = equationSb.toString();
-                    equationLabel.setText(equation);
+                if (ut.getLastChar(equation) == Symbol.DOT.getSymbol()) {
+                    equation = ut.addChar(equation, '0');
                 }
 
-                if (equation.isEmpty() && operatorIsMinus) {
-                    equation += operatorButton.getText();
-                    equationLabel.setText(equation);
-                } else if (!equation.isEmpty() && Utils.isLastCharDigit(equation)) {
-                    equation += operatorButton.getText();
-                    equationLabel.setText(equation);
-                } else if (!equation.isEmpty() && Utils.isOperator(equation.substring(equation.length() - 1))) {
-                    if (!equation.equals(String.valueOf(Symbol.SUBTRACT.getSymbol()))) {
-                        equationSb.deleteCharAt(equationSb.length() - 1);
-                        equation = equationSb.toString();
-                        equation += operatorButton.getText();
-                        equationLabel.setText(equation);
-                    }
-                }
+
+
+                equation += operatorButton.getText();
+                equationLabel.setText(equation);
+
+//                if (equation.isEmpty() && operatorIsMinus) {
+//                    equation += operatorButton.getText();
+//                    equationLabel.setText(equation);
+//                } else if (!equation.isEmpty() && ut.isLastCharDigit(equation)) {
+//                    equation += operatorButton.getText();
+//                    equationLabel.setText(equation);
+//                } else if (!equation.isEmpty() && ut.isOperator(equation.substring(equation.length() - 1))) {
+//                    if (!equation.equals(String.valueOf(Symbol.SUBTRACT.getSymbol()))) {
+//                        equationSb.deleteCharAt(equationSb.length() - 1);
+//                        equation = equationSb.toString();
+//                        equation += operatorButton.getText();
+//                        equationLabel.setText(equation);
+//                    }
+//                }
 
             });
         }
 
         dotButton.addActionListener(e -> {
             String equation = equationLabel.getText();
-            //if (Utils.isDotAllowed(equation)) {
-            equation += dotButton.getText();
-            equationLabel.setText(equation);
-            //}
+            if (ut.isDotAllowed(equation)) {
+                equation += dotButton.getText();
+                equation = ut.addZeroBeforeDotIfNecessary(equation);
+                equationLabel.setText(equation);
+            }
         });
 
         plusMinusButton.addActionListener(e -> {
             String equation = equationLabel.getText();
-            StringBuilder sb = new StringBuilder(equation);
 
             switch (equation.length()) {
 
@@ -208,15 +205,13 @@ public class Calculator extends JFrame {
 
                 default:
 
-                    if (sb.charAt(sb.length() - 1) == '-') {
-                        sb.deleteCharAt(sb.length() - 1);
-                        sb.append('+');
-                        equationLabel.setText(sb.toString());
-                    } else if (sb.charAt(sb.length() - 1) == '+') {
-                        sb.deleteCharAt(sb.length() - 1);
-                        sb.append('-');
-                        equationLabel.setText(sb.toString());
+                    if (ut.getLastChar(equation) == '-') {
+                        equation = ut.changeLastChar(equation, '+');
+                    } else if (ut.getLastChar(equation) == '+') {
+                        equation = ut.changeLastChar(equation, '-');
                     }
+
+                    equationLabel.setText(equation);
 
             }
 
@@ -243,8 +238,8 @@ public class Calculator extends JFrame {
 
             if (Character.isDigit(lastCharacter)) {
                 equationLabel.setForeground(Color.BLACK);
-                Deque<String> postFixNotationStack = Utils.convertToPostFixNotation(equation);
-                String result = Utils.calculate(postFixNotationStack);
+                Deque<String> postFixNotationStack = ut.convertToPostFixNotation(equation);
+                String result = ut.calculate(postFixNotationStack);
                 if (result.equals("DIVIDE_BY_0")) {
                     equationLabel.setForeground(Color.RED.darker());
                     resultLabel.setText("0");
@@ -259,4 +254,5 @@ public class Calculator extends JFrame {
         });
 
     }
+
 }
