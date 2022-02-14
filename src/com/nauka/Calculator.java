@@ -42,8 +42,7 @@ public class Calculator extends JFrame {
     };
 
     private final JButton[] operatorButtons = new JButton[]{
-            addButton, subtractButton, multiplyButton, divideButton,
-            powerTwoButton, powerYButton, squareRootButton
+            addButton, subtractButton, multiplyButton, divideButton
     };
 
     private final Utils ut = new Utils();
@@ -147,15 +146,12 @@ public class Calculator extends JFrame {
         for (JButton operatorButton : operatorButtons) {
             operatorButton.addActionListener(e -> {
                 String equation = equationLabel.getText();
-
-                if (ut.getLastChar(equation) == Symbol.DOT.getSymbol()) {
-                    equation = ut.addChar(equation, '0');
-                }
+                String operator = operatorButton.getText();
 
 
-
-                equation += operatorButton.getText();
+                equation = ut.insertProperOperator(equation, operator);
                 equationLabel.setText(equation);
+
 
 //                if (equation.isEmpty() && operatorIsMinus) {
 //                    equation += operatorButton.getText();
@@ -175,6 +171,30 @@ public class Calculator extends JFrame {
             });
         }
 
+        parenthesisButton.addActionListener(e -> {
+            String equation = equationLabel.getText();
+            equation = ut.openOrCloseParenthesis(equation);
+            equationLabel.setText(equation);
+        });
+
+        squareRootButton.addActionListener(e -> {
+            String equation = equationLabel.getText();
+            equation += Symbol.SQUARE_ROOT.getSymbol() + "" + Symbol.LEFT_PARENTHESIS.getSymbol();
+            equationLabel.setText(equation);
+        });
+
+        powerTwoButton.addActionListener(e -> {
+            String equation = equationLabel.getText();
+            equation += "^(2)";
+            equationLabel.setText(equation);
+        });
+
+        powerYButton.addActionListener(e -> {
+            String equation = equationLabel.getText();
+            equation += "^(";
+            equationLabel.setText(equation);
+        });
+
         dotButton.addActionListener(e -> {
             String equation = equationLabel.getText();
             if (ut.isDotAllowed(equation)) {
@@ -186,39 +206,13 @@ public class Calculator extends JFrame {
 
         plusMinusButton.addActionListener(e -> {
             String equation = equationLabel.getText();
-
-            switch (equation.length()) {
-
-                case 0:
-
-                    equationLabel.setText("-");
-                    break;
-
-                case 1:
-
-                    if (equationLabel.getText().equals("-")) {
-                        equationLabel.setText("");
-                    } else if (equationLabel.getText().equals("-")) {
-                        equationLabel.setText("-");
-                    }
-                    break;
-
-                default:
-
-                    if (ut.getLastChar(equation) == '-') {
-                        equation = ut.changeLastChar(equation, '+');
-                    } else if (ut.getLastChar(equation) == '+') {
-                        equation = ut.changeLastChar(equation, '-');
-                    }
-
-                    equationLabel.setText(equation);
-
-            }
-
+            equation = ut.negateOrCancelNegate(equation);
+            equationLabel.setText(equation);
         });
 
         clearButton.addActionListener(e -> {
             equationLabel.setText("");
+            equationLabel.setForeground(Color.BLACK);
             resultLabel.setText("0");
         });
 

@@ -6,13 +6,13 @@ public enum Symbol {
     SUBTRACT('\u002D', 1, true),
     MULTIPLY('\u00D7', 2, true),
     DIVIDE('\u00F7', 2, true),
-    POWER_TWO('\u00B2', -1, true),
-    POWER_Y('\u02B8', -1, true),
-    SQUARE_ROOT('\u221A', -1, true),
+    POWER_TWO('\u00B2', 3, true),
+    POWER_Y('\u02B8', 3, true),
+    SQUARE_ROOT('\u221A', 3, true),
     DOT('.', 0, false),
     PLUS_MINUS('\u00B1', -1, false),
-    LEFT_PARENTHESIS('(', -1, false),
-    RIGHT_PARENTHESIS(')', -1, false);
+    LEFT_PARENTHESIS('(', 4, false),
+    RIGHT_PARENTHESIS(')', 4, false);
 
     private final char symbol;
     private final int rank;

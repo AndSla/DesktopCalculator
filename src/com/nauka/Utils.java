@@ -10,8 +10,11 @@ import java.util.Objects;
 public class Utils {
 
     boolean isLastCharDigit(String equation) {
-        char lastChar = equation.charAt(equation.length() - 1);
-        return Character.isDigit(lastChar);
+        if (equation.length() > 0) {
+            char lastChar = equation.charAt(equation.length() - 1);
+            return Character.isDigit(lastChar);
+        }
+        return false;
     }
 
     private int getRank(Character symbol) {
@@ -29,6 +32,15 @@ public class Utils {
                 if (value.getSymbol() == symbol.charAt(0)) {
                     return value.isOperator();
                 }
+            }
+        }
+        return false;
+    }
+
+    boolean isOperator(char symbol) {
+        for (Symbol value : Symbol.values()) {
+            if (value.getSymbol() == symbol) {
+                return value.isOperator();
             }
         }
         return false;
@@ -237,6 +249,82 @@ public class Utils {
         StringBuilder sb = new StringBuilder(equation);
         sb.insert(index, insertChar);
         return sb.toString();
+    }
+
+    String openOrCloseParenthesis(String equation) {
+        int leftQuantity = 0;
+        int rightQuantity = 0;
+
+        if (getLastChar(equation) == Symbol.LEFT_PARENTHESIS.getSymbol()) {
+            return equation + Symbol.LEFT_PARENTHESIS.getSymbol();
+        }
+
+        if (isOperator((getLastChar(equation)))) {
+            return equation + Symbol.LEFT_PARENTHESIS.getSymbol();
+        }
+
+        for (int i = 0; i < equation.length(); i++) {
+            if (equation.charAt(i) == Symbol.LEFT_PARENTHESIS.getSymbol()) {
+                leftQuantity += 1;
+            }
+            if (equation.charAt(i) == Symbol.RIGHT_PARENTHESIS.getSymbol()) {
+                rightQuantity += 1;
+            }
+        }
+
+        if (leftQuantity == rightQuantity) {
+
+            if (getLastChar(equation) == Symbol.RIGHT_PARENTHESIS.getSymbol()) {
+                return equation;
+            } else if (isLastCharDigit(equation)) {
+                return equation;
+            } else {
+                return equation + Symbol.LEFT_PARENTHESIS.getSymbol();
+            }
+
+        }
+
+        return equation + Symbol.RIGHT_PARENTHESIS.getSymbol();
+
+    }
+
+    String negateOrCancelNegate(String equation) {
+        char lastChar = getLastChar(equation);
+
+        if (equation.length() == 0) {
+            equation = "(-";
+        } else {
+            if (equation.endsWith("(-")) {
+                equation = deleteLastChar(equation);
+                equation = deleteLastChar(equation);
+            } else if (isOperator(lastChar)) {
+                equation += "(-";
+            }
+        }
+
+        return equation;
+
+    }
+
+    String insertProperOperator(String equation, String operator) {
+        char lastChar = getLastChar(equation);
+
+        if (lastChar == Symbol.DOT.getSymbol()) {
+            equation = addChar(equation, '0');
+        }
+
+        if (isOperator(lastChar)) {
+            equation = deleteLastChar(equation);
+        } else if (isLastCharDigit(equation)) {
+
+        } else if (getLastChar(equation) == Symbol.RIGHT_PARENTHESIS.getSymbol()) {
+
+        } else {
+            operator = "";
+        }
+
+        return equation + operator;
+
     }
 
 }
