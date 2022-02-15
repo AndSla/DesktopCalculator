@@ -10,9 +10,9 @@ public enum Symbol {
     POWER_Y('\u02B8', 3, true),
     SQUARE_ROOT('\u221A', 3, true),
     DOT('.', 0, false),
-    PLUS_MINUS('\u00B1', -1, false),
-    LEFT_PARENTHESIS('(', 4, false),
-    RIGHT_PARENTHESIS(')', 4, false);
+    PLUS_MINUS('\u00B1', 0, false),
+    LEFT_PARENTHESIS('(', 0, false),
+    RIGHT_PARENTHESIS(')', 0, false);
 
     private final char symbol;
     private final int rank;

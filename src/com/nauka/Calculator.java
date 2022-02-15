@@ -223,9 +223,9 @@ public class Calculator extends JFrame {
 
         equalsButton.addActionListener(e -> {
             String equation = equationLabel.getText();
-            char lastCharacter = equation.charAt(equation.length() - 1);
+            char lastCharacter = ut.getLastChar(equation);
 
-            if (Character.isDigit(lastCharacter)) {
+            if (Character.isDigit(lastCharacter) || lastCharacter == Symbol.RIGHT_PARENTHESIS.getSymbol()) {
                 equationLabel.setForeground(Color.BLACK);
                 Deque<String> postFixNotationStack = ut.convertToPostFixNotation(equation);
                 String result = ut.calculate(postFixNotationStack);

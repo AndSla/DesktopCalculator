@@ -56,31 +56,84 @@ public class Utils {
         for (int i = 0; i < equation.length(); i++) {
             char scan = equation.charAt(i);
 
-            if (i == 0 && equation.charAt(i) == Symbol.SUBTRACT.getSymbol()) {
+            if (scan == '-' && equation.charAt(i - 1) == '(') {
                 number.append("-");
                 continue;
             }
 
             if (Character.isDigit(scan) || scan == Symbol.DOT.getSymbol()) {
                 number.append(scan);
-            } else {
-                postFixNotationStack.add(number.toString());
-                number.setLength(0);
+            }
+
+            if (isOperator(scan)) {
+
+                addNumberToPostfixNotationStack(postFixNotationStack, number);
+
+                int scannedOperatorRank = getRank(scan);
+                int stackedOperatorRank;
+
                 if (!operatorsStack.isEmpty()) {
-                    int scannedOperatorRank = getRank(scan);
-                    int stackedOperatorRank = getRank(operatorsStack.peekLast());
-                    if (stackedOperatorRank >= scannedOperatorRank) {
-                        postFixNotationStack.add(String.valueOf(operatorsStack.pollLast()));
-                    }
+                    stackedOperatorRank = getRank(operatorsStack.peekLast());
+                } else {
+                    stackedOperatorRank = -1;
                 }
+
+                if (operatorsStack.isEmpty() ||
+                        scannedOperatorRank > stackedOperatorRank ||
+                        operatorsStack.contains(Symbol.LEFT_PARENTHESIS.getSymbol())) {
+
+                    operatorsStack.add(scan);
+
+                } else {
+
+                    while (!operatorsStack.isEmpty()) {
+
+                        if (operatorsStack.peekLast() == Symbol.LEFT_PARENTHESIS.getSymbol() ||
+                                operatorsStack.peekLast() == Symbol.RIGHT_PARENTHESIS.getSymbol()) {
+                            break;
+                        }
+
+                        stackedOperatorRank = getRank(operatorsStack.peekLast());
+
+                        if (stackedOperatorRank >= scannedOperatorRank) {
+                            postFixNotationStack.add(String.valueOf(operatorsStack.pollLast()));
+                        } else {
+                            break;
+                        }
+
+                    }
+
+                    operatorsStack.add(scan);
+
+                }
+
+            }
+
+            if (scan == Symbol.LEFT_PARENTHESIS.getSymbol()) {
+                addNumberToPostfixNotationStack(postFixNotationStack, number);
                 operatorsStack.add(scan);
             }
 
-            if (i == equation.length() - 1) {
-                postFixNotationStack.add(number.toString());
+            if (scan == Symbol.RIGHT_PARENTHESIS.getSymbol()) {
+
+                addNumberToPostfixNotationStack(postFixNotationStack, number);
+
+                while (true) {
+
+                    if (!operatorsStack.isEmpty() &&
+                            operatorsStack.peekLast() == Symbol.LEFT_PARENTHESIS.getSymbol()) {
+                        operatorsStack.pollLast();
+                        break;
+                    }
+
+                    postFixNotationStack.add(String.valueOf(operatorsStack.pollLast()));
+
+                }
             }
 
         }
+
+        addNumberToPostfixNotationStack(postFixNotationStack, number);
 
         while (!operatorsStack.isEmpty()) {
             postFixNotationStack.add(String.valueOf(operatorsStack.pollLast()));
@@ -88,6 +141,13 @@ public class Utils {
 
         return postFixNotationStack;
 
+    }
+
+    void addNumberToPostfixNotationStack(Deque<String> postFixNotationStack, StringBuilder number) {
+        if (number.toString().matches("-*\\d+" + Symbol.DOT.getSymbol() + "*\\d*")) {
+            postFixNotationStack.add(number.toString());
+            number.setLength(0);
+        }
     }
 
     boolean isDotAllowed(String equation) {
@@ -229,12 +289,6 @@ public class Utils {
             return '#';
         }
         return equation.charAt(equation.length() - 1);
-    }
-
-    String changeLastChar(String equation, char changeInto) {
-        StringBuilder sb = new StringBuilder(equation);
-        sb.setCharAt(equation.length() - 1, changeInto);
-        return sb.toString();
     }
 
     String deleteLastChar(String equation) {
