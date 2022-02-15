@@ -97,13 +97,15 @@ public class Utils {
         if (equation.length() > 0) {
 
             while (equation.length() > 0) {
+                boolean isLastCharDot = getLastChar(equation) == Symbol.DOT.getSymbol();
+                boolean isLastCharRightParenthesis = getLastChar(equation) == Symbol.RIGHT_PARENTHESIS.getSymbol();
 
-                if (getLastChar(equation) == Symbol.DOT.getSymbol()) {
+                if (isLastCharDot || isLastCharRightParenthesis) {
                     isAllowed = false;
                     break;
                 }
 
-                if (isOperator(String.valueOf(getLastChar(equation)))) {
+                if (isOperator(getLastChar(equation))) {
                     break;
                 }
 
@@ -263,6 +265,10 @@ public class Utils {
             return equation + Symbol.LEFT_PARENTHESIS.getSymbol();
         }
 
+        if (getLastChar(equation) == Symbol.DOT.getSymbol()) {
+            return equation;
+        }
+
         for (int i = 0; i < equation.length(); i++) {
             if (equation.charAt(i) == Symbol.LEFT_PARENTHESIS.getSymbol()) {
                 leftQuantity += 1;
@@ -308,22 +314,51 @@ public class Utils {
 
     String insertProperOperator(String equation, String operator) {
         char lastChar = getLastChar(equation);
+        char rightParenthesis = Symbol.RIGHT_PARENTHESIS.getSymbol();
+        char dot = Symbol.DOT.getSymbol();
 
-        if (lastChar == Symbol.DOT.getSymbol()) {
+        if (lastChar == dot) {
             equation = addChar(equation, '0');
         }
 
         if (isOperator(lastChar)) {
             equation = deleteLastChar(equation);
-        } else if (isLastCharDigit(equation)) {
-
-        } else if (getLastChar(equation) == Symbol.RIGHT_PARENTHESIS.getSymbol()) {
-
-        } else {
+        } else if (!(isLastCharDigit(equation) || lastChar == rightParenthesis)) {
             operator = "";
         }
 
         return equation + operator;
+
+    }
+
+    String insertSquareRootIfPossible(String equation) {
+        char lastChar = getLastChar(equation);
+
+        if (equation.length() == 0) {
+            equation = Symbol.SQUARE_ROOT.getSymbol() + "" + Symbol.LEFT_PARENTHESIS.getSymbol();
+        } else if (isOperator(lastChar)) {
+            equation += Symbol.SQUARE_ROOT.getSymbol() + "" + Symbol.LEFT_PARENTHESIS.getSymbol();
+        }
+
+        return equation;
+
+    }
+
+    String insertPowerTwoIfPossible(String equation) {
+        if (isLastCharDigit(equation)) {
+            equation += "^(2)";
+        }
+
+        return equation;
+
+    }
+
+    String insertPowerYIfPossible(String equation) {
+        if (isLastCharDigit(equation)) {
+            equation += "^(";
+        }
+
+        return equation;
 
     }
 

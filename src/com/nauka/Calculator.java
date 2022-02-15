@@ -41,7 +41,7 @@ public class Calculator extends JFrame {
             sixButton, sevenButton, eightButton, nineButton, zeroButton
     };
 
-    private final JButton[] operatorButtons = new JButton[]{
+    private final JButton[] basicOperatorButtons = new JButton[]{
             addButton, subtractButton, multiplyButton, divideButton
     };
 
@@ -138,36 +138,20 @@ public class Calculator extends JFrame {
         for (JButton digitButton : digitButtons) {
             digitButton.addActionListener(e -> {
                 String equation = equationLabel.getText();
-                equation += digitButton.getText();
-                equationLabel.setText(equation);
+                boolean lastCharIsCloseParenthesis = ut.getLastChar(equation) == Symbol.RIGHT_PARENTHESIS.getSymbol();
+                if (!lastCharIsCloseParenthesis) {
+                    equation += digitButton.getText();
+                    equationLabel.setText(equation);
+                }
             });
         }
 
-        for (JButton operatorButton : operatorButtons) {
-            operatorButton.addActionListener(e -> {
+        for (JButton basicOperatorButton : basicOperatorButtons) {
+            basicOperatorButton.addActionListener(e -> {
                 String equation = equationLabel.getText();
-                String operator = operatorButton.getText();
-
-
+                String operator = basicOperatorButton.getText();
                 equation = ut.insertProperOperator(equation, operator);
                 equationLabel.setText(equation);
-
-
-//                if (equation.isEmpty() && operatorIsMinus) {
-//                    equation += operatorButton.getText();
-//                    equationLabel.setText(equation);
-//                } else if (!equation.isEmpty() && ut.isLastCharDigit(equation)) {
-//                    equation += operatorButton.getText();
-//                    equationLabel.setText(equation);
-//                } else if (!equation.isEmpty() && ut.isOperator(equation.substring(equation.length() - 1))) {
-//                    if (!equation.equals(String.valueOf(Symbol.SUBTRACT.getSymbol()))) {
-//                        equationSb.deleteCharAt(equationSb.length() - 1);
-//                        equation = equationSb.toString();
-//                        equation += operatorButton.getText();
-//                        equationLabel.setText(equation);
-//                    }
-//                }
-
             });
         }
 
@@ -179,19 +163,19 @@ public class Calculator extends JFrame {
 
         squareRootButton.addActionListener(e -> {
             String equation = equationLabel.getText();
-            equation += Symbol.SQUARE_ROOT.getSymbol() + "" + Symbol.LEFT_PARENTHESIS.getSymbol();
+            equation = ut.insertSquareRootIfPossible(equation);
             equationLabel.setText(equation);
         });
 
         powerTwoButton.addActionListener(e -> {
             String equation = equationLabel.getText();
-            equation += "^(2)";
+            equation = ut.insertPowerTwoIfPossible(equation);
             equationLabel.setText(equation);
         });
 
         powerYButton.addActionListener(e -> {
             String equation = equationLabel.getText();
-            equation += "^(";
+            equation = ut.insertPowerYIfPossible(equation);
             equationLabel.setText(equation);
         });
 
@@ -218,10 +202,21 @@ public class Calculator extends JFrame {
 
         delButton.addActionListener(e -> {
             String equation = equationLabel.getText();
+            String squareRoot = Symbol.SQUARE_ROOT.getSymbol() + "" + Symbol.LEFT_PARENTHESIS.getSymbol();
+            String powerY = "^(";
+            String powerTwo = "^(2)";
 
             if (equation.length() > 0) {
-                equation = equation.substring(0, equation.length() - 1);
+
+                if (equation.endsWith(squareRoot) || equation.endsWith(powerY)) {
+                    equation = equation.substring(0, equation.length() - 2);
+                } else if (equation.endsWith(powerTwo)) {
+                    equation = equation.substring(0, equation.length() - 4);
+                } else {
+                    equation = equation.substring(0, equation.length() - 1);
+                }
                 equationLabel.setText(equation);
+
             }
 
         });
