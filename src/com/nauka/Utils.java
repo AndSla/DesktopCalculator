@@ -70,17 +70,14 @@ public class Utils {
                 addNumberToPostfixNotationStack(postFixNotationStack, number);
 
                 int scannedOperatorRank = getRank(scan);
-                int stackedOperatorRank;
+                int stackedOperatorRank = -1;
 
                 if (!operatorsStack.isEmpty()) {
                     stackedOperatorRank = getRank(operatorsStack.peekLast());
-                } else {
-                    stackedOperatorRank = -1;
                 }
 
                 if (operatorsStack.isEmpty() ||
-                        scannedOperatorRank > stackedOperatorRank ||
-                        operatorsStack.contains(Symbol.LEFT_PARENTHESIS.getSymbol())) {
+                        scannedOperatorRank > stackedOperatorRank) {
 
                     operatorsStack.add(scan);
 
@@ -138,7 +135,6 @@ public class Utils {
         while (!operatorsStack.isEmpty()) {
             postFixNotationStack.add(String.valueOf(operatorsStack.pollLast()));
         }
-
         return postFixNotationStack;
 
     }
@@ -217,7 +213,10 @@ public class Utils {
             if (isOperator(scan)) {
                 String operator = subEquation.pollLast();
                 BigDecimal b = BigDecimal.valueOf(Double.parseDouble(Objects.requireNonNull(subEquation.pollLast())));
-                BigDecimal a = BigDecimal.valueOf(Double.parseDouble(Objects.requireNonNull(subEquation.pollLast())));
+                BigDecimal a = new BigDecimal(0);
+                if (!String.valueOf(Symbol.SQUARE_ROOT.getSymbol()).equals(operator)) {
+                    a = BigDecimal.valueOf(Double.parseDouble(Objects.requireNonNull(subEquation.pollLast())));
+                }
 
                 if (String.valueOf(Symbol.ADD.getSymbol()).equals(operator)) {
                     result = String.valueOf(a.add(b, mathContext));
@@ -242,6 +241,16 @@ public class Utils {
                         result = String.valueOf(a.divide(b, mathContext));
                         subEquation.offerLast(result);
                     }
+                }
+
+                if (String.valueOf(Symbol.POWER.getSymbol()).equals(operator)) {
+                    result = String.valueOf(a.pow(b.intValue(), mathContext));
+                    subEquation.offerLast(result);
+                }
+
+                if (String.valueOf(Symbol.SQUARE_ROOT.getSymbol()).equals(operator)) {
+                    result = String.valueOf(Math.sqrt(b.doubleValue()));
+                    subEquation.offerLast(result);
                 }
 
                 while (!subEquation.isEmpty()) {
