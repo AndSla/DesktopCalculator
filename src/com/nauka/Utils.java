@@ -368,7 +368,12 @@ public class Utils {
                 equation = deleteLastChar(equation);
             } else if (isOperator(lastChar)) {
                 equation += "(-";
+            } else if (equation.startsWith("(-")) {
+                equation = equation.substring(2);
+            } else {
+                equation = "(-" + equation;
             }
+
         }
 
         return equation;

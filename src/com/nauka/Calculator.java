@@ -229,7 +229,7 @@ public class Calculator extends JFrame {
                 equationLabel.setForeground(Color.BLACK);
                 Deque<String> postFixNotationStack = ut.convertToPostFixNotation(equation);
                 String result = ut.calculate(postFixNotationStack);
-                if (result.equals("DIVIDE_BY_0")) {
+                if (result.equals("DIVIDE_BY_0") || result.equals("NaN")) {
                     equationLabel.setForeground(Color.RED.darker());
                     resultLabel.setText("0");
                 } else {
