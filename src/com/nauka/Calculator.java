@@ -202,23 +202,8 @@ public class Calculator extends JFrame {
 
         delButton.addActionListener(e -> {
             String equation = equationLabel.getText();
-            String squareRoot = Symbol.SQUARE_ROOT.getSymbol() + "" + Symbol.LEFT_PARENTHESIS.getSymbol();
-            String powerY = "^(";
-            String powerTwo = "^(2)";
-
-            if (equation.length() > 0) {
-
-                if (equation.endsWith(squareRoot) || equation.endsWith(powerY)) {
-                    equation = equation.substring(0, equation.length() - 2);
-                } else if (equation.endsWith(powerTwo)) {
-                    equation = equation.substring(0, equation.length() - 4);
-                } else {
-                    equation = equation.substring(0, equation.length() - 1);
-                }
-                equationLabel.setText(equation);
-
-            }
-
+            equation = ut.smartDelete(equation);
+            equationLabel.setText(equation);
         });
 
         equalsButton.addActionListener(e -> {

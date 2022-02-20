@@ -76,12 +76,8 @@ public class Utils {
                     stackedOperatorRank = getRank(operatorsStack.peekLast());
                 }
 
-                if (operatorsStack.isEmpty() ||
-                        scannedOperatorRank > stackedOperatorRank) {
-
-                    operatorsStack.add(scan);
-
-                } else {
+                if (!operatorsStack.isEmpty() &&
+                        scannedOperatorRank <= stackedOperatorRank) {
 
                     while (!operatorsStack.isEmpty()) {
 
@@ -100,9 +96,9 @@ public class Utils {
 
                     }
 
-                    operatorsStack.add(scan);
-
                 }
+
+                operatorsStack.add(scan);
 
             }
 
@@ -186,12 +182,12 @@ public class Utils {
             int index = equation.length() - 1;
 
             if (!Character.isDigit(equation.charAt(index - 1))) {
-                equation = insertCharAtIndex(equation, index, '0');
+                equation = insertZeroAtIndex(equation, index);
             }
 
         } else {
 
-            equation = insertCharAtIndex(equation, 0, '0');
+            equation = insertZeroAtIndex(equation, 0);
 
         }
 
@@ -306,13 +302,13 @@ public class Utils {
         return sb.toString();
     }
 
-    String addChar(String equation, char charToAdd) {
-        return equation + charToAdd;
+    String addZeroAfter(String equation) {
+        return equation + '0';
     }
 
-    String insertCharAtIndex(String equation, int index, char insertChar) {
+    String insertZeroAtIndex(String equation, int index) {
         StringBuilder sb = new StringBuilder(equation);
-        sb.insert(index, insertChar);
+        sb.insert(index, '0');
         return sb.toString();
     }
 
@@ -359,19 +355,24 @@ public class Utils {
 
     String negateOrCancelNegate(String equation) {
         char lastChar = getLastChar(equation);
+        String negate = Symbol.LEFT_PARENTHESIS.getSymbol() + "" + Symbol.SUBTRACT.getSymbol();
+        String negateAll = Symbol.SUBTRACT.getSymbol() + "" + Symbol.LEFT_PARENTHESIS.getSymbol();
+        String rightParenthesis = String.valueOf(Symbol.RIGHT_PARENTHESIS.getSymbol());
 
         if (equation.length() == 0) {
-            equation = "(-";
+            equation = negate;
         } else {
-            if (equation.endsWith("(-")) {
+            if (equation.endsWith(negate)) {
                 equation = deleteLastChar(equation);
                 equation = deleteLastChar(equation);
             } else if (isOperator(lastChar)) {
-                equation += "(-";
-            } else if (equation.startsWith("(-")) {
+                equation += negate;
+            } else if (equation.startsWith(negate)) {
                 equation = equation.substring(2);
+            } else if (equation.startsWith(negateAll) && equation.endsWith(rightParenthesis)) {
+                equation = equation.substring(2, equation.length() - 1);
             } else {
-                equation = "(-" + equation;
+                equation = negateAll + equation + rightParenthesis;
             }
 
         }
@@ -386,7 +387,7 @@ public class Utils {
         char dot = Symbol.DOT.getSymbol();
 
         if (lastChar == dot) {
-            equation = addChar(equation, '0');
+            equation = addZeroAfter(equation);
         }
 
         if (isOperator(lastChar)) {
@@ -414,7 +415,7 @@ public class Utils {
 
     String insertPowerTwoIfPossible(String equation) {
         if (isLastCharDigit(equation)) {
-            equation += "^(2)";
+            equation += Symbol.POWER.getSymbol() + "(2)";
         }
 
         return equation;
@@ -423,7 +424,30 @@ public class Utils {
 
     String insertPowerYIfPossible(String equation) {
         if (isLastCharDigit(equation)) {
-            equation += "^(";
+            equation += Symbol.POWER.getSymbol() + "(";
+        }
+
+        return equation;
+
+    }
+
+    String smartDelete(String equation) {
+        String squareRoot = Symbol.SQUARE_ROOT.getSymbol() + "" + Symbol.LEFT_PARENTHESIS.getSymbol();
+        String powerY = Symbol.POWER.getSymbol() + "" + Symbol.LEFT_PARENTHESIS.getSymbol();
+        String powerTwo = Symbol.POWER.getSymbol() + "" +
+                Symbol.LEFT_PARENTHESIS.getSymbol() + "2" + Symbol.RIGHT_PARENTHESIS.getSymbol();
+        String negate = Symbol.LEFT_PARENTHESIS.getSymbol() + "" + Symbol.SUBTRACT.getSymbol();
+
+        if (equation.length() > 0) {
+
+            if (equation.endsWith(squareRoot) || equation.endsWith(powerY) || equation.endsWith(negate)) {
+                equation = equation.substring(0, equation.length() - 2);
+            } else if (equation.endsWith(powerTwo)) {
+                equation = equation.substring(0, equation.length() - 4);
+            } else {
+                equation = equation.substring(0, equation.length() - 1);
+            }
+
         }
 
         return equation;
