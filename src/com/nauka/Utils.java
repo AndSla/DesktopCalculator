@@ -354,7 +354,7 @@ public class Utils {
 
     }
 
-    boolean isLeftEqualsRightParenthesisQuantities(String equation){
+    boolean isLeftEqualsRightParenthesisQuantities(String equation) {
         int leftQuantity = 0;
         int rightQuantity = 0;
 
@@ -420,7 +420,7 @@ public class Utils {
 
         if (equation.length() == 0) {
             equation = Symbol.SQUARE_ROOT.getSymbol() + "" + Symbol.LEFT_PARENTHESIS.getSymbol();
-        } else if (isOperator(lastChar)) {
+        } else if (isOperator(lastChar) || lastChar == Symbol.LEFT_PARENTHESIS.getSymbol()) {
             equation += Symbol.SQUARE_ROOT.getSymbol() + "" + Symbol.LEFT_PARENTHESIS.getSymbol();
         }
 
@@ -429,7 +429,9 @@ public class Utils {
     }
 
     String insertPowerTwoIfPossible(String equation) {
-        if (isLastCharDigit(equation)) {
+        char lastChar = getLastChar(equation);
+
+        if (isLastCharDigit(equation) || lastChar == Symbol.RIGHT_PARENTHESIS.getSymbol()) {
             equation += Symbol.POWER.getSymbol() + "(2)";
         }
 
@@ -438,7 +440,9 @@ public class Utils {
     }
 
     String insertPowerYIfPossible(String equation) {
-        if (isLastCharDigit(equation)) {
+        char lastChar = getLastChar(equation);
+
+        if (isLastCharDigit(equation) || lastChar == Symbol.RIGHT_PARENTHESIS.getSymbol()) {
             equation += Symbol.POWER.getSymbol() + "(";
         }
 
