@@ -241,6 +241,8 @@ public class Utils {
                 }
 
                 if (String.valueOf(Symbol.SQUARE_ROOT.getSymbol()).equals(operator)) {
+                    // need one operand for this operation, so I give one back on stack
+                    subEquation.offerLast(operandA);
                     equationResult.setMethod(new SquareRoot());
                 }
 
