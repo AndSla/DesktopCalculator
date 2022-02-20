@@ -1,8 +1,7 @@
 package com.nauka;
 
-import java.math.BigDecimal;
-import java.math.MathContext;
-import java.math.RoundingMode;
+import com.nauka.calcmethods.*;
+
 import java.util.ArrayDeque;
 import java.util.Deque;
 
@@ -203,9 +202,10 @@ public class Utils {
 
     String calculate(Deque<String> postFixNotationStack) {
 
+        EquationResult equationResult = new EquationResult();
+
         String result = "0";
         Deque<String> subEquation = new ArrayDeque<>();
-        MathContext mathContext = new MathContext(12, RoundingMode.HALF_EVEN);
 
         while (postFixNotationStack.size() > 0) {
 
@@ -214,51 +214,42 @@ public class Utils {
 
             if (isOperator(scan)) {
                 String operator = subEquation.pollLast();
-                String operandA = subEquation.pollLast();
                 String operandB = subEquation.pollLast();
+                String operandA = subEquation.pollLast();
 
-                operandA = operandA == null ? "0" : operandA;
                 operandB = operandB == null ? "0" : operandB;
-
-                BigDecimal b = BigDecimal.valueOf(Double.parseDouble(operandA));
-                BigDecimal a = new BigDecimal(0);
-                if (!String.valueOf(Symbol.SQUARE_ROOT.getSymbol()).equals(operator)) {
-                    a = BigDecimal.valueOf(Double.parseDouble(operandB));
-                }
+                operandA = operandA == null ? "0" : operandA;
 
                 if (String.valueOf(Symbol.ADD.getSymbol()).equals(operator)) {
-                    result = String.valueOf(a.add(b, mathContext));
-                    subEquation.offerLast(result);
+                    equationResult.setMethod(new Addition());
                 }
 
                 if (String.valueOf(Symbol.SUBTRACT.getSymbol()).equals(operator)) {
-                    result = String.valueOf(a.subtract(b, mathContext));
-                    subEquation.offerLast(result);
+                    equationResult.setMethod(new Subtraction());
                 }
 
                 if (String.valueOf(Symbol.MULTIPLY.getSymbol()).equals(operator)) {
-                    result = String.valueOf(a.multiply(b, mathContext));
-                    subEquation.offerLast(result);
+                    equationResult.setMethod(new Multiplication());
                 }
 
                 if (String.valueOf(Symbol.DIVIDE.getSymbol()).equals(operator)) {
-                    if (b.doubleValue() == 0) {
-                        result = "DIVIDE_BY_0";
-                        break;
-                    } else {
-                        result = String.valueOf(a.divide(b, mathContext));
-                        subEquation.offerLast(result);
-                    }
+                    equationResult.setMethod(new Division());
                 }
 
                 if (String.valueOf(Symbol.POWER.getSymbol()).equals(operator)) {
-                    result = String.valueOf(a.pow(b.intValue(), mathContext));
-                    subEquation.offerLast(result);
+                    equationResult.setMethod(new Power());
                 }
 
                 if (String.valueOf(Symbol.SQUARE_ROOT.getSymbol()).equals(operator)) {
-                    result = String.valueOf(Math.sqrt(b.doubleValue()));
+                    equationResult.setMethod(new SquareRoot());
+                }
+
+                result = equationResult.calculate(operandA, operandB);
+
+                if (!result.equals("DIVIDE_BY_0")) {
                     subEquation.offerLast(result);
+                } else {
+                    break;
                 }
 
                 while (!subEquation.isEmpty()) {
