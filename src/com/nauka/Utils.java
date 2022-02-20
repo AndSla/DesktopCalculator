@@ -5,7 +5,6 @@ import java.math.MathContext;
 import java.math.RoundingMode;
 import java.util.ArrayDeque;
 import java.util.Deque;
-import java.util.Objects;
 
 public class Utils {
 
@@ -51,13 +50,19 @@ public class Utils {
         Deque<String> postFixNotationStack = new ArrayDeque<>();
         Deque<Character> operatorsStack = new ArrayDeque<>();
 
+        char minus = Symbol.SUBTRACT.getSymbol();
+        char leftParenthesis = Symbol.LEFT_PARENTHESIS.getSymbol();
+
         StringBuilder number = new StringBuilder();
 
         for (int i = 0; i < equation.length(); i++) {
             char scan = equation.charAt(i);
 
-            if (scan == '-' && equation.charAt(i - 1) == '(') {
-                number.append("-");
+            if (i != 0 &&
+                    scan == minus &&
+                    equation.charAt(i - 1) == leftParenthesis &&
+                    equation.charAt(i + 1) != leftParenthesis) {
+                number.append(minus);
                 continue;
             }
 
@@ -131,6 +136,7 @@ public class Utils {
         while (!operatorsStack.isEmpty()) {
             postFixNotationStack.add(String.valueOf(operatorsStack.pollLast()));
         }
+
         return postFixNotationStack;
 
     }
@@ -208,10 +214,16 @@ public class Utils {
 
             if (isOperator(scan)) {
                 String operator = subEquation.pollLast();
-                BigDecimal b = BigDecimal.valueOf(Double.parseDouble(Objects.requireNonNull(subEquation.pollLast())));
+                String operandA = subEquation.pollLast();
+                String operandB = subEquation.pollLast();
+
+                operandA = operandA == null ? "0" : operandA;
+                operandB = operandB == null ? "0" : operandB;
+
+                BigDecimal b = BigDecimal.valueOf(Double.parseDouble(operandA));
                 BigDecimal a = new BigDecimal(0);
                 if (!String.valueOf(Symbol.SQUARE_ROOT.getSymbol()).equals(operator)) {
-                    a = BigDecimal.valueOf(Double.parseDouble(Objects.requireNonNull(subEquation.pollLast())));
+                    a = BigDecimal.valueOf(Double.parseDouble(operandB));
                 }
 
                 if (String.valueOf(Symbol.ADD.getSymbol()).equals(operator)) {
@@ -313,8 +325,6 @@ public class Utils {
     }
 
     String openOrCloseParenthesis(String equation) {
-        int leftQuantity = 0;
-        int rightQuantity = 0;
 
         if (getLastChar(equation) == Symbol.LEFT_PARENTHESIS.getSymbol()) {
             return equation + Symbol.LEFT_PARENTHESIS.getSymbol();
@@ -328,16 +338,7 @@ public class Utils {
             return equation;
         }
 
-        for (int i = 0; i < equation.length(); i++) {
-            if (equation.charAt(i) == Symbol.LEFT_PARENTHESIS.getSymbol()) {
-                leftQuantity += 1;
-            }
-            if (equation.charAt(i) == Symbol.RIGHT_PARENTHESIS.getSymbol()) {
-                rightQuantity += 1;
-            }
-        }
-
-        if (leftQuantity == rightQuantity) {
+        if (isLeftEqualsRightParenthesisQuantities(equation)) {
 
             if (getLastChar(equation) == Symbol.RIGHT_PARENTHESIS.getSymbol()) {
                 return equation;
@@ -351,6 +352,22 @@ public class Utils {
 
         return equation + Symbol.RIGHT_PARENTHESIS.getSymbol();
 
+    }
+
+    boolean isLeftEqualsRightParenthesisQuantities(String equation){
+        int leftQuantity = 0;
+        int rightQuantity = 0;
+
+        for (int i = 0; i < equation.length(); i++) {
+            if (equation.charAt(i) == Symbol.LEFT_PARENTHESIS.getSymbol()) {
+                leftQuantity += 1;
+            }
+            if (equation.charAt(i) == Symbol.RIGHT_PARENTHESIS.getSymbol()) {
+                rightQuantity += 1;
+            }
+        }
+
+        return leftQuantity == rightQuantity;
     }
 
     String negateOrCancelNegate(String equation) {
@@ -367,8 +384,6 @@ public class Utils {
                 equation = deleteLastChar(equation);
             } else if (isOperator(lastChar)) {
                 equation += negate;
-            } else if (equation.startsWith(negate)) {
-                equation = equation.substring(2);
             } else if (equation.startsWith(negateAll) && equation.endsWith(rightParenthesis)) {
                 equation = equation.substring(2, equation.length() - 1);
             } else {

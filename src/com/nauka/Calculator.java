@@ -210,7 +210,7 @@ public class Calculator extends JFrame {
             String equation = equationLabel.getText();
             char lastCharacter = ut.getLastChar(equation);
 
-            if (Character.isDigit(lastCharacter) || lastCharacter == Symbol.RIGHT_PARENTHESIS.getSymbol()) {
+            if (!ut.isOperator(lastCharacter) && ut.isLeftEqualsRightParenthesisQuantities(equation)) {
                 equationLabel.setForeground(Color.BLACK);
                 Deque<String> postFixNotationStack = ut.convertToPostFixNotation(equation);
                 String result = ut.calculate(postFixNotationStack);
